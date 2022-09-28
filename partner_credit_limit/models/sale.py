@@ -14,7 +14,6 @@ class SaleOrder(models.Model):
         self.ensure_one()
         partner = self.partner_id
         #adicionado por staff
-        #company_id = self.env.context.get('company_id')
         company_id = self.env.company.id
         user_id = self.env['res.users'].search([
             ('partner_id', '=', partner.id)], limit=1)
@@ -31,6 +30,7 @@ class SaleOrder(models.Model):
             )
             confirm_sale_order = self.search(
                 [('partner_id', '=', partner.id),
+                 ('company_id','=', company_id),
                  ('state', '=', 'sale'),
                  ('invoice_status', '!=', 'invoiced')])
             debit, credit = 0.0, 0.0
