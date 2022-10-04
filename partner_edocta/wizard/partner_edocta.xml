@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2018 ForgeFlow, S.L. (https://www.forgeflow.com)
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+<odoo>
+   <data>
+	<record id="wizard_edocta" model="ir.ui.view">
+        <field name="name">Estado de Cuenta</field>
+        <field name="model">partner.edocta</field>
+        <field name="arch" type="xml">
+            <form string="partner_edocta">
+                <group>
+                    <field name="date_start"/>
+                </group>
+
+               <footer>
+                    <button string="Export PDF" name="button_export_pdf" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+
+            </form>
+        </field>
+    </record>
+
+    <!-- wizard action on res.partner -->
+    <record id="wizard_edocta" model="ir.actions.act_window">
+        <field name="name">Facturas-Pagos</field>
+        <field name="binding_model_id" ref="base.model_res_partner" />
+        <field name="res_model">partner.edocta</field>
+        <field name="view_mode">form</field>
+<!--        <field
+            name="groups_id"
+            eval="[(4, ref('partner_edocta.group_edocta'))]"
+        />   -->
+        <field name="target">new</field>
+    </record>
+	   
+    <report
+		id="partner_edocta.report_cn"
+		string="Facturas VS Pagos"
+		model="res.partner"
+		report_type="qweb-pdf"
+		name="partner_edocta.report_cn"
+		file="partner_edocta.report_cn"
+		paperformat="partner_edocta.paperformat_edocta_landscape"
+    />
+   </data>
+</odoo>
