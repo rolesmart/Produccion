@@ -7,17 +7,19 @@ from odoo import fields, models, api
 class AccountMove(models.Model):
     _inherit = 'account.move'
 
-    term_vta_id = fields.Integer('Términos de Venta', compute="_term_vta_id", readonly=True)
+    term_vta = fields.Char(string='Términos de Venta', compute="_term_vta", readonly=True)
 
-    @api.depends('invoice_origin')    
-    def _term_vta_id(self):
+    @api.depends('invoice_origin','move_type')    
+    def _term_vta(self):
         for rec in self:
-            id_venta=0
+            id_venta=''
             pedido=''
-            pedido = rec.invoice_origin
-            venta = env['sale.order'].search([('name','=',pedido)])
-            if venta:
-                for busca in venta:
-                    if busca.payment_term_id.id > 0:
-                        id_venta = busca.payment_term_id.id
-            rec['term_vta_id'] = id_venta
+            if rec.move_type == 'out_invoice':
+                pedido = rec.invoice_origin
+                venta = self.env['sale.order'].search([('name','=',pedido)])
+                if venta:
+                    for busca in venta:
+                        if busca.payment_term_id.name != '':
+                            id_venta = busca.payment_term_id.name
+            
+            rec['term_vta'] = id_venta
