@@ -5,7 +5,7 @@
 
 {
     "name": "Custom fields Construnorte",
-    "version": "15.9.1.0.0",
+    "version": "16.0",
     "category": "Sale",
     "license": "AGPL-3",
     "summary": "Campos personalizados Construnorte",
