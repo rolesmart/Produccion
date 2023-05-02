@@ -1,0 +1,51 @@
+<odoo>
+    <record model="ir.ui.view" id="edocta_report_wizard">
+        <field name="name">HR Attendance Custom Recap Report</field>
+        <field name="model">edocta.report.wizard</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="Facturas VS Pagos">
+                <group>
+                    <field name="date_start"/>
+                </group>
+
+               <footer>
+                    <button string="Export PDF" name="button_export_pdf" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+
+            </form>
+        </field>
+    </record>
+
+    <!--
+    <act_window id="action_edocta_report_wizard"
+                name="Edocta Report"
+                res_model="edocta.report.wizard"
+                view_mode="form"
+                target="new"/>
+anterior -->
+
+    <!-- actions opening views on models -->
+    <record model="ir.actions.act_window" id="action_edocta_report_wizard">
+      <field name="name">Facturas-Pagos</field>
+      <field name="res_model">edocta.report.wizard</field>
+      <field name="view_mode">form</field>
+      <field name="target">new</field>
+      <field name="binding_model_id" ref="base.model_res_partner"/>
+    </record>
+
+    <!--
+    <menuitem action="action_edocta_report_wizard"
+              id="menu_attendance_report_wizard_2"
+              parent="hr_attendance.menu_hr_attendance_report"/>
+
+
+    <menuitem action="action_edocta_report_wizard"
+              id="menu_attendance_report_wizard_5"
+              parent="account.menu_account_customer"/>
+
+anterior -->
+
+
+</odoo>

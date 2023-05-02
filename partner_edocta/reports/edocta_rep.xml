@@ -1,0 +1,126 @@
+<odoo>
+
+		<record id="paperformat_edocta_landscape" model="report.paperformat">
+			<field name="name">Estado de Cuenta -Facturas VS Pagos</field>
+			<field name="default" eval="False"/>
+			<field name="format">Letter</field>
+			<field name="page_width">0</field>
+			<field name="orientation">Landscape</field>
+			<field name="margin_top">22</field>
+			<field name="margin_bottom">20</field>
+			<field name="margin_right">7</field>
+			<field name="margin_left">7</field>
+			<field name="header_line" eval="False"/>
+			<field name="header_spacing">20</field>
+			<field name="dpi">90</field>
+		</record>
+
+		<record id="edocta_report" model="ir.actions.report">
+			<field name="name">Facturas VS Pagos</field>
+			<field name="model">edocta.report.wizard</field>
+   			<field name="report_type">qweb-pdf</field>
+   			<field name="report_name">partner_edocta.edocta_report_view</field>
+   			<field name="report_file">partner_edocta.edocta_report_view</field>
+       		<field name="paperformat_id" ref="paperformat_edocta_landscape"/>
+			<field name="binding_type">report</field>
+		</record>
+
+
+    <template id="edocta_report_view">
+		<t t-call="web.html_container">
+			<t t-call="web.external_layout">
+				<div class="page" style="font-size: 75%;">
+					<div style="text-align:center"><h6><span t-field="docs.partner_id"/></h6></div>
+					<div style="text-align:right">
+						<h6><t t-esc = "fecha_inicial"/><span style="padding-left: 20px;" t-esc="'{0:,.2f}'.format(saldo_inicial)"/></h6>
+					</div>
+					<table class="table table-sm"   style="padding: 0.2rem;">
+						<style>
+							.table-sm td {padding: 0.1rem;}
+						</style>
+						<thead>
+							<tr>
+								<th>Fecha Fac.</th>
+								<th>Fecha Pago.</th>
+								<th>Documento</th>
+								<th colspan="3">Docto.Rel.</th>
+								<th>Diario.</th>
+								<th style="text-align:right">Total</th>
+								<th style="text-align:right">Saldo</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr t-foreach="docs" t-as="o">
+								<t t-if="docs_list[o_index]['date_start'] == 's'">
+								<td><span t-field="o.invoice_date" t-options="{&quot;format&quot;: &quot;dd/MM/yyyy&quot;}"/></td>
+								<td/>
+								<td><span t-field="o.name"/></td>
+								<td colspan="3"><span t-field="o.invoice_origin"/></td>
+								<td/>
+								<td style="text-align:right"><span t-field="o.amount_total_signed"/></td>
+								<td style="text-align:right"><span t-field="o.amount_residual_signed"/></td>
+								<tr t-foreach="facturas_list" t-as="f">
+									<t t-if="o.name == facturas_list[f_index]['factura']">
+										<td/>
+										<td><span t-esc="facturas_list[f_index]['date']"/></td>
+										<td><span t-esc="facturas_list[f_index]['numpago']"/></td>
+										<td colspan="3"><span t-esc="facturas_list[f_index]['ref']"/></td>
+										<td><span t-esc="facturas_list[f_index]['journal_name']"/></td>
+										<td/>
+										<td style="text-align:right">-<span t-esc="'{0:,.2f}'.format(facturas_list[f_index]['amount'])"/></td>
+										<!-- <t t-set="tot_pago1" t-value="tot_pago1+facturas_list[f_index]['amount']"/>  -->
+									</t>
+								</tr>
+								<t t-set="enc1" t-value="0"/>
+
+								<tr t-foreach="partidas_list" t-as="f">
+									<t t-if="o.id == partidas_list[f_index]['move_id']">
+										<t t-if="enc1 == 0">
+											<!-- si hay elemento poner el encabezado del detalle factura  -->
+											<tr>
+												<td/>
+												<td style="text-align:right; font-size: 85%; padding-right: 2%;">Cantidad</td>
+												<td style="font-size: 85%">Producto</td>
+												<td style="font-size: 85%; text-align:right;">Precio</td>
+												<td style="font-size: 85%; text-align:right;">Subtotal</td>
+												<td style="font-size: 85%; text-align:right;">Total c/IVA</td>
+											</tr>
+										</t>
+										<t t-set="enc1" t-value="1"/>
+										<td/>
+										<td style="text-align:right; font-size: 85%;  padding-right: 2%;"><span t-esc="'{0:,.2f}'.format(partidas_list[f_index]['quantity'])"/></td>
+										<td style="font-size: 85%"><span t-esc="partidas_list[f_index]['name']"/></td>
+										<td style="text-align:right; font-size: 85%;"><span t-esc="'{0:,.2f}'.format(partidas_list[f_index]['price_unit'])"/></td>
+										<td style="text-align:right; font-size: 85%;"><span t-esc="'{0:,.2f}'.format(partidas_list[f_index]['price_subtotal'])"/></td>
+										<td style="text-align:right; font-size: 85%;"><span t-esc="'{0:,.2f}'.format(partidas_list[f_index]['price_total'])"/></td>
+									</t>
+								</tr>
+
+								</t>
+							</tr>
+
+							<tr>
+								<td colspan="7" style="text-align:center"/>
+							</tr>
+							<tr>
+								<td colspan="7" style="text-align:center"><h6>Pagos totales o parciales no  asignados a facturas</h6></td>
+							</tr>
+							<t t-set="tot_pago2" t-value="0"/>
+							<tr t-foreach="pagos_list" t-as="f">
+								<t t-if="pagos_list[f_index]['saldo'] &gt; 0">
+									<td/>
+									<td><span t-esc="pagos_list[f_index]['payment_date']"/></td>
+									<td><span t-esc="pagos_list[f_index]['name']"/></td>
+									<td colspan="2"><span t-esc="pagos_list[f_index]['diario']"/></td>
+									<td style="text-align:right">-<span t-esc="'{0:,.2f}'.format(pagos_list[f_index]['saldo'])"/></td>
+									<t t-set="tot_pago2" t-value="tot_pago2+pagos_list[f_index]['saldo']"/>
+								</t>
+							</tr>
+						</tbody>
+					</table>
+					<div style="text-align:right"><h6>Saldo:<span style="padding-left: 20px;" t-esc="'{0:,.2f}'.format(tot_factura-tot_pago1-tot_pago2)"/></h6></div>
+				</div>
+			</t>
+		</t>
+    </template>
+</odoo>
