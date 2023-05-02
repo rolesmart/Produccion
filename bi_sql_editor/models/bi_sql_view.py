@@ -117,8 +117,6 @@ class BiSQLView(models.Model):
         },
     )
 
-    has_group_changed = fields.Boolean(copy=False)
-
     bi_sql_view_field_ids = fields.One2many(
         string="SQL Fields",
         comodel_name="bi.sql.view.field",
@@ -170,6 +168,12 @@ class BiSQLView(models.Model):
 
     sequence = fields.Integer(string="sequence")
 
+    option_context_field = fields.Boolean(
+        string="Use Context Field",
+        help="Check this box if you want to add a context column in the field list view."
+        " Custom Context will be inserted in the created views.",
+    )
+
     # Constrains Section
     @api.constrains("is_materialized")
     def _check_index_materialized(self):
@@ -202,6 +206,11 @@ class BiSQLView(models.Model):
                 lambda x: x.graph_type == "measure"
             ):
                 action["pivot_measures"].append(field.name)
+
+            # If no measure are defined, we display by default the count
+            # of the element, to avoid an empty view
+            if not action["pivot_measures"]:
+                action["pivot_measures"] = ["__count__"]
 
             for field in rec.bi_sql_view_field_ids.filtered(
                 lambda x: x.graph_type == "row"
@@ -238,14 +247,9 @@ class BiSQLView(models.Model):
                 sql_view.technical_name,
             )
 
-    @api.onchange("group_ids")
-    def onchange_group_ids(self):
-        if self.state not in ("draft", "sql_valid"):
-            self.has_group_changed = True
-
     # Overload Section
     def write(self, vals):
-        res = super(BiSQLView, self).write(vals)
+        res = super().write(vals)
         if vals.get("sequence", False):
             for rec in self.filtered(lambda x: x.menu_id):
                 rec.menu_id.sequence = rec.sequence
@@ -260,7 +264,7 @@ class BiSQLView(models.Model):
                 )
             )
         self.cron_id.unlink()
-        return super(BiSQLView, self).unlink()
+        return super().unlink()
 
     def copy(self, default=None):
         self.ensure_one()
@@ -271,7 +275,7 @@ class BiSQLView(models.Model):
                 "technical_name": "%s_copy" % self.technical_name,
             }
         )
-        return super(BiSQLView, self).copy(default=default)
+        return super().copy(default=default)
 
     # Action Section
     def button_create_sql_view_and_model(self):
@@ -313,7 +317,6 @@ class BiSQLView(models.Model):
                 # Drop ORM
                 sql_view._drop_model_and_fields()
 
-            sql_view.has_group_changed = False
             super(BiSQLView, sql_view).button_set_draft()
         return True
 
@@ -636,7 +639,7 @@ class BiSQLView(models.Model):
         the database structure is done, to know fields type."""
         self.ensure_one()
         sql_view_field_obj = self.env["bi.sql.view.field"]
-        columns = super(BiSQLView, self)._check_execution()
+        columns = super()._check_execution()
         field_ids = []
         for column in columns:
             existing_field = self.bi_sql_view_field_ids.filtered(
@@ -707,9 +710,9 @@ class BiSQLView(models.Model):
     def check_manual_fields(self, model):
         # check the fields we need are defined on self, to stop it going
         # early on install / startup - particularly problematic during upgrade
-        if "group_operator" in table_columns(
-            self.env.cr, "bi_sql_view_field"
-        ) and model._name.startswith(self._model_prefix):
+        if model._name.startswith(
+            self._model_prefix
+        ) and "group_operator" in table_columns(self.env.cr, "bi_sql_view_field"):
             # Use SQL instead of ORM, as ORM might not be fully initialised -
             # we have no control over the order that fields are defined!
             # We are not concerned about user security rules.
