@@ -9,9 +9,9 @@
         Facturas, pagos y detalle de productos entregados.
     """,
 
-    'author': "Rolando Estrada Martínez",
-    'website': "https://staffinformatico.com.mx",
-    'license": "LGPL-3',    
+    'author': 'Rolando Estrada Martínez',
+    'website': 'https://staffinformatico.com.mx',
+    'license': 'LGPL-3',
     'category': 'Uncategorized',
     'version': '0.1',
 
