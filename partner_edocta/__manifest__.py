@@ -11,6 +11,7 @@
 
     'author': "Rolando Estrada Martínez",
     'website': "https://staffinformatico.com.mx",
+    'license": "LGPL-3',    
     'category': 'Uncategorized',
     'version': '0.1',
 
