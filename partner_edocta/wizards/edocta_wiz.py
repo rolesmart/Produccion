@@ -13,6 +13,7 @@ _logger = logging.getLogger(__name__)
 
 class EdoctaReportWizard(models.TransientModel):
     _name = 'edocta.report.wizard'
+    _description = "Estado de cuenta CONSTRUNORTE"
 
     date_end = fields.Date(string="End Date", required=True, default=fields.Date.today)
     #date_start = fields.Date(string="Start Date", required=True, default=fields.Date.today)
@@ -171,11 +172,3 @@ class ReportEdocta(models.AbstractModel):
             'fecha_inicial': fecha_inicial,
         }
 
-
-        #return {
-        #    'doc_ids': data['ids'],
-        #    'doc_model': data['model'],
-        #    'date_start': date_start,
-        #    'date_end': date_end,
-        #    'docs': docs,
-        #}
