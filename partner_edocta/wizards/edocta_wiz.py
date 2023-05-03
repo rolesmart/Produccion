@@ -50,6 +50,7 @@ class ReportEdocta(models.AbstractModel):
     """
 
     _name = 'report.partner_edocta.edocta_report_view'
+    _description = "Procesa datos EdoCta CONSTRUNORTE"
 
     @api.model
     def _get_report_values(self, docids, data=None):
