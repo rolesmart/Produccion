@@ -4,10 +4,17 @@ from odoo import models, fields, api
 class HideMenuUser(models.Model):
     _inherit = 'res.users'
 
-    @api.model
-    def create(self, vals):
+    # Modificado por Staff 03/05/23
+    # @api.model
+    # def create(self, vals):
+    #    self.clear_caches()
+    #    return super(HideMenuUser, self).create(vals)
+    
+    @api.model_create_multi
+    def create(self, vals_list):
         self.clear_caches()
-        return super(HideMenuUser, self).create(vals)
+        return super(HideMenuUser, self).create(vals_list)
+
 
     def write(self, vals):
         res = super(HideMenuUser, self).write(vals)
