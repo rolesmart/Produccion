@@ -1,0 +1,104 @@
+<odoo>
+  <data>
+    <!-- explicit list view definition -->
+
+    <record model="ir.ui.view" id="visit_gps.list">
+      <field name="name">visit.gps.list</field>
+      <field name="model">visit.gps</field>
+      <field name="arch" type="xml">
+        <tree>
+          <!--   <field name="name"/>  -->
+          <field name="fecha_visita"/>
+          <field name="partner_id"/>
+          <field name="pedido"/>
+          <field name="survey_id"/>
+          <field name="survey_start_url"/>
+          <field name="latitud"/>
+          <field name="longitud"/>
+          <field name="state"/>
+        </tree>
+      </field>
+    </record>
+
+    <!-- view de form -->
+    <record model="ir.ui.view" id="visit_gps.form">
+      <field name="name">visit.gps.form</field>
+      <field name="model">visit.gps</field>
+      <field name="arch" type="xml">
+      <form>
+        <script>
+          $(document).ready(function(){
+          $("#latitud").attr("readonly", true);
+          $("#longitud").attr('readonly', true);
+          document.getElementById("gps").innerHTML = $("#latitud").val() + ","+ $("#longitud").val();
+          });
+        </script>
+          <header>
+            <button name="button_in_done" class="oe_highlight" states="draft" string="Procesado" type="object" help="Confirmación de la visita"/>
+            <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
+          </header>
+          <sheet>
+            <group>
+              <group>
+                <field name="fecha_visita" placeholder="Fecha / Hora Registro"/>
+              </group>
+              <group>
+                <input id="btnSubmit" type="submit" value="Obtenga Geolocalización" class="btn btn-primary" icon="fa-check"/>
+              </group>
+              <group>
+              </group>
+              <group>
+                <field name="latitud"/>
+                <field name="longitud"/>
+                <div style="font-weight: 500;">Coordenadas: </div>
+                <p id="gps"></p>
+              </group>
+            </group>
+            <div class="border-top"/>
+            <group class="mt48">
+              <group>
+                <field name="partner_id" placeholder="Cliente visitado" options="{'no_create': True, 'no_create_edit':True}" domain="[('customer_rank','&gt;', 0)]"/>
+                <field name="survey_id" placeholder="Seleccione la encuesta aplicada" options="{'no_create': True, 'no_create_edit':True}"/>
+              </group>
+              <group>
+                <field name="pedido" widget="radio" options="{'horizontal': true}"/>
+                <field name="survey_start_url" widget="CopyClipboardChar"/>
+              </group>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+<!--
+<group>
+</group>
+ -->
+
+    <!-- actions opening views on models -->
+    <record model="ir.actions.act_window" id="visit_gps.action_window">
+      <field name="name">Vista al cliente</field>
+      <field name="res_model">visit.gps</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Top menu item -->
+
+    <menuitem name="Visita" id="visit_gps.menu_root"
+    action="visit_gps.action_window"
+    sequence="200"/>
+
+    <!-- menu categories -->
+<!--
+    <menuitem name="Menu 1" id="visit_gps.menu_1" parent="visit_gps.menu_root"/>
+    <menuitem name="Menu 2" id="visit_gps.menu_2" parent="visit_gps.menu_root"/>
+-->
+    <!-- actions -->
+<!--
+    <menuitem name="List" id="visit_gps.menu_1_list" parent="visit_gps.menu_1"
+              action="visit_gps.action_window"/>
+    <menuitem name="Server to list" id="visit_gps" parent="visit_gps.menu_2"
+              action="visit_gps.action_server"/>
+-->
+  </data>
+</odoo>
