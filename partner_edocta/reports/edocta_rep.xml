@@ -31,6 +31,11 @@
 			<t t-call="web.external_layout">
 				<div class="page" style="font-size: 75%;">
 					<div style="text-align:center"><h6><span t-field="docs.partner_id"/></h6></div>
+					<div style="padding: 1rem;margin-bottom: 20PX;border: 1px solid grey;">
+						<pre><h6>   SI ( )        NO ( )    Estoy de acuerdo con el saldo total, por un importe de $__________________ al cierrre del mes de ____________________________.</h6></pre>
+						<pre><h6>Nombre completo ___________________________________________________________________. Puesto ___________________________________.</h6></pre>
+						<pre><h6>Comentarios _________________________________________________________________________________________________________________.</h6></pre>
+					</div>					
 					<div style="text-align:right">
 						<h6><t t-esc = "fecha_inicial"/><span style="padding-left: 20px;" t-esc="'{0:,.2f}'.format(saldo_inicial)"/></h6>
 					</div>
