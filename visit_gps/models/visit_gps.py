@@ -44,7 +44,7 @@ class VisitGps(models.Model):
             calendar_event = self.env['calendar.event'].create({
                 'name': 'Visita: ' + partner_id.name,
                 'start': datetime.datetime.now(),
-                'stop': datetime.datetime.now() + datetime.timedelta(hours=2),
+                'stop': datetime.datetime.now() + datetime.timedelta(minutes=20),
                 'res_model_id': self.env['ir.model']._get_id('res.partner'),
                 'res_id': self.id,
                 'partner_ids': [(4, partner_id.id), (4, self.env.user.partner_id.id)],
