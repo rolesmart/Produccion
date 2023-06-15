@@ -4,11 +4,11 @@
 
 {
     "name": "Custom fields Construnorte",
-    "version": "15.0.2.0.0",
+    "version": "16.0.2.0.0",
     "category": "Sale",
     "license": "LGPL-3",
     "summary": "Campos personalizados Construnorte",
     "author": "Rolando Estrada Martínez",
-    "depends": ["sale", "purchase",],
+    "depends": ["sale", "account", "purchase",],
     "installable": True,
 }

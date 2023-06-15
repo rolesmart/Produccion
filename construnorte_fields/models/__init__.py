@@ -5,3 +5,4 @@ from . import sale_report
 from . import purchase
 from . import purchase_report
 from . import account_move
+from . import account_invoice_report
