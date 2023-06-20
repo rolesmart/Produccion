@@ -23,7 +23,7 @@ class SaleReport(models.Model):
         res = super()._select_additional_fields()
         res['precio_promedio'] = "l.precio_promedio"
         res['ciudad'] = "s.ciudad"
-        res['categoria'] = "rpc.name"
+        res['categoria'] = "partner.categoria"
         res['p_producto_30'] = "sol01.p_producto_30"
         res['p_producto_60'] = "sol01.p_producto_60"
         res['p_producto_90'] = "sol01.p_producto_90"
@@ -38,15 +38,13 @@ class SaleReport(models.Model):
 
     def _group_by_sale(self):
         res = super()._group_by_sale()
-        res += """, l.precio_promedio, s.ciudad, rpc.name, sol01.p_producto_30, sol01.p_producto_60, sol01.p_producto_90, sol02.p_producto_cty_30, sol02.p_producto_cty_60, \
+        res += """, l.precio_promedio, s.ciudad, partner.categoria, sol01.p_producto_30, sol01.p_producto_60, sol01.p_producto_90, sol02.p_producto_cty_30, sol02.p_producto_cty_60, \
         sol02.p_producto_cty_90, sol03.p_producto_ven_30, sol03.p_producto_ven_60, sol03.p_producto_ven_90"""
         return res
 
 
     def _from_sale(self):
         res = super()._from_sale()
-        res += ''' left join res_partner_res_partner_category_rel rprpcr on rprpcr.partner_id = partner.id \
-        left join res_partner_category rpc on rpc.id = rprpcr.category_id '''
 
         res += ''' inner join (select  product_id, \
         ( sum(case when so1.date_order > current_date -30 then price_total end) / sum(case when so1.date_order > current_date -30 then qty_invoiced end) \
